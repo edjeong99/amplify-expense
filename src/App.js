@@ -1,29 +1,22 @@
 import logo from './logo.svg';
 import './App.css';
-import {  ExpenseCreateForm  } from './ui-components';
-import { useEffect, useState } from 'react';
- function  App() {
-  const [expenses, setExpenses] = useState();
 
-  // List all items
-  useEffect(() => { 
-    const fetchExpenses = async () => {
-      const allExpenses = await API.graphql({
-        query: listExpenses
-       });
-     console.log(allExpenses);
-     
-    setExpenses(allExpenses)
-    }
-    });
-
-
+function App() {
   return (
     <div className="App">
       <header className="App-header">
-        REACT  EXPENSE
-
-        <ExpenseCreateForm />
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>
+          Edit <code>src/App.js</code> and save to reload.
+        </p>
+        <a
+          className="App-link"
+          href="https://reactjs.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn React
+        </a>
       </header>
     </div>
   );

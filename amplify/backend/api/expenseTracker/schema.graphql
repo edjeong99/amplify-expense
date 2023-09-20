@@ -1,6 +1,0 @@
-type Expense @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  item: String!
-  amount: Float!
-  categoty: String
-} 
