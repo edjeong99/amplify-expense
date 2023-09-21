@@ -11,7 +11,7 @@ const initialState = { item: '', category: '', amount:0 }
 
 function App({ signOut, user }) { 
 
-  const [formState, setFormState] = useState(initialState)
+  
   const [expenses, setExpenses] = useState([])
 
   useEffect(() => {
@@ -32,10 +32,8 @@ function App({ signOut, user }) {
     } catch (err) { console.log('error fetching expenses') }
   }
 
-  async function addExpense() {
+  async function addExpense(expense) {
     try {
-      if (!formState.item || !formState.category || !formState.amount) return
-      const expense = { ...formState }
       setExpenses([...expenses, expense])
       setFormState(initialState)
       await API.graphql(graphqlOperation(createExpense, {input: expense}))
@@ -50,27 +48,7 @@ function App({ signOut, user }) {
        <Heading level={1}>Hello {user.username}</Heading>
     <Button onClick={signOut}>Sign out</Button>
    
-    <h2>Amplify Expense</h2>
-     <input 
-      onChange={event => setInput('item', event.target.value)}
-      style={styles.input}
-      value={formState.item}
-      placeholder="item"
-    /> 
-    <input
-      onChange={event => setInput('category', event.target.value)}
-      style={styles.input}
-      value={formState.category}
-      placeholder="category"
-    /> 
-    <input
-      onChange={event => setInput('amount', event.target.value)}
-      style={styles.input}
-      value={formState.amount}
-      placeholder="amount"
-    /> 
-
-    { <button style={styles.button} onClick={addExpense}>Create expense</button> }
+   <addExpense addExpense={addExpense} />
     {
       expenses.map((expense, index) => (
         <div key={expense.id ? expense.id : index} style={styles.expense}>
