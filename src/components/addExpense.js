@@ -1,6 +1,8 @@
 
 import React, { useState } from 'react'
-export const addExpense = () => {
+const initialState = { item: '', category: '', amount:0 }
+
+const AddExpense = ({addExpense}) => {
 
     const [formState, setFormState] = useState(initialState)
 
@@ -11,7 +13,9 @@ export const addExpense = () => {
     function handleAddExpense() {
           if (!formState.item || !formState.category || !formState.amount)
             return
+
          addExpense({ ...formState });
+         setFormState(initialState)
       }
 
   return (
@@ -49,3 +53,5 @@ const styles = {
     expenseAmount: { color:'red', fontWeight: 'bold' },
     button: { backgroundColor: 'black', color: 'white', outline: 'none', fontSize: 18, padding: '12px 0px' }
   }
+
+  export default AddExpense

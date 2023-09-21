@@ -4,23 +4,24 @@ import { API, graphqlOperation } from 'aws-amplify'
 import { createExpense } from './graphql/mutations'
 import { listExpenses } from './graphql/queries'
 import React, { useEffect, useState } from 'react'
-import { withAuthenticator, Button, Heading } from '@aws-amplify/ui-react';
-import '@aws-amplify/ui-react/styles.css';
+import { withAuthenticator} from '@aws-amplify/ui-react';
 
-const initialState = { item: '', category: '', amount:0 }
+import AddExpense from './components/AddExpense'
+import Header from './components/Header'
+import {Container, Modal}  from '@mui/material'
+import ExpenseList from './components/ExpenseList';
 
 function App({ signOut, user }) { 
-
-  
   const [expenses, setExpenses] = useState([])
+const [showAddExpense, setShowAddExpense] = useState(false);
 
   useEffect(() => {
     fetchExpenses()
   }, [])
 
-  function setInput(key, value) {
-    setFormState({ ...formState, [key]: value })
-  }
+const handleShowAddExpense = () => {
+  setShowAddExpense(prevState => !prevState);
+}
 
   async function fetchExpenses() {
     try {
@@ -35,7 +36,7 @@ function App({ signOut, user }) {
   async function addExpense(expense) {
     try {
       setExpenses([...expenses, expense])
-      setFormState(initialState)
+
       await API.graphql(graphqlOperation(createExpense, {input: expense}))
     } catch (err) {
       console.log('error creating todo:', err)
@@ -44,21 +45,21 @@ function App({ signOut, user }) {
 
 
   return (
-    <div style={styles.container}>
-       <Heading level={1}>Hello {user.username}</Heading>
-    <Button onClick={signOut}>Sign out</Button>
+    // <div style={styles.container}>
+    <Container maxWidth="sm">
+     <meta name="viewport" content="initial-scale=1, width=device-width" />
+   <Header signOut={signOut} showAddExpense={handleShowAddExpense}/>
+   <Modal
+      open={showAddExpense}
+      onClose={handleShowAddExpense}
+      aria-labelledby="modal-modal-title" >
+      <AddExpense addExpense={addExpense} />
+    </Modal>
+
+    <ExpenseList expenses={expenses} />
    
-   <addExpense addExpense={addExpense} />
-    {
-      expenses.map((expense, index) => (
-        <div key={expense.id ? expense.id : index} style={styles.expense}>
-          <p style={styles.expenseItem}>{expense.item}</p>
-          <p style={styles.expenseCategory}>{expense.category}</p>
-          <p style={styles.expenseAmount}>{expense.amount}</p>
-        </div>
-      ))
-    }
-  </div>
+    </Container>
+
 )
 
 }
@@ -71,4 +72,7 @@ const styles = {
   expenseAmount: { color:'red', fontWeight: 'bold' },
   button: { backgroundColor: 'black', color: 'white', outline: 'none', fontSize: 18, padding: '12px 0px' }
 }
-export default withAuthenticator(App);
+export default (App);
+// export default withAuthenticator(App);
+
+
