@@ -2,5 +2,11 @@
   "AppSyncApiName": "amplifyexpense",
   "DynamoDBBillingMode": "PAY_PER_REQUEST",
   "DynamoDBEnableServerSideEncryption": false,
-  "AuthModeLastUpdated": "2023-09-22T02:27:46.767Z"
+  "AuthModeLastUpdated": "2023-09-22T21:17:26.341Z",
+  "AuthCognitoUserPoolId": {
+    "Fn::GetAtt": [
+      "authamplifyexpense36922940",
+      "Outputs.UserPoolId"
+    ]
+  }
 }

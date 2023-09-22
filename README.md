@@ -1,3 +1,14 @@
+
+This is a practive project to use AWS Amplify for fast development and deploying.
+Also used Material UI.
+
+
+- NewForm1.jsx - created by Amplify.  execute create fetch automatically.
+- ExpenseList - use DataGrid by MUI.
+
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
