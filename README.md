@@ -5,6 +5,7 @@ Also used Material UI.
 
 - NewForm1.jsx - created by Amplify.  execute create fetch automatically.
 - ExpenseList - use DataGrid by MUI.
+- used amplify created component ExpenseCreateForm.  can use props to handle what to do when 'submit' is clicked, ie 'onSuccess'
 
 
 

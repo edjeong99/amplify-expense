@@ -6,7 +6,13 @@
 
 /* eslint-disable */
 import * as React from "react";
-import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
+import {
+  Button,
+  Flex,
+  Grid,
+  SelectField,
+  TextField,
+} from "@aws-amplify/ui-react";
 import { getOverrideProps } from "@aws-amplify/ui-react/internal";
 import { Expense } from "../models";
 import { fetchByPath, validateField } from "./utils";
@@ -158,10 +164,10 @@ export default function ExpenseUpdateForm(props) {
         hasError={errors.item?.hasError}
         {...getOverrideProps(overrides, "item")}
       ></TextField>
-      <TextField
+      <SelectField
         label="Category"
-        isRequired={false}
-        isReadOnly={false}
+        placeholder="Please select an option"
+        isDisabled={false}
         value={category}
         onChange={(e) => {
           let { value } = e.target;
@@ -183,7 +189,28 @@ export default function ExpenseUpdateForm(props) {
         errorMessage={errors.category?.errorMessage}
         hasError={errors.category?.hasError}
         {...getOverrideProps(overrides, "category")}
-      ></TextField>
+      >
+        <option
+          children="Entertainment"
+          value="ENTERTAINMENT"
+          {...getOverrideProps(overrides, "categoryoption0")}
+        ></option>
+        <option
+          children="Food"
+          value="FOOD"
+          {...getOverrideProps(overrides, "categoryoption1")}
+        ></option>
+        <option
+          children="Beauty"
+          value="BEAUTY"
+          {...getOverrideProps(overrides, "categoryoption2")}
+        ></option>
+        <option
+          children="Etc"
+          value="ETC"
+          {...getOverrideProps(overrides, "categoryoption3")}
+        ></option>
+      </SelectField>
       <TextField
         label="Amount"
         isRequired={true}

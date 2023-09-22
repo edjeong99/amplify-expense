@@ -17,7 +17,7 @@ import { getOverrideProps } from "@aws-amplify/ui-react/internal";
 import { Expense } from "../models";
 import { fetchByPath, validateField } from "./utils";
 import { DataStore } from "aws-amplify";
-export default function NewForm1(props) {
+export default function AddExpense(props) {
   const {
     clearOnSuccess = true,
     onSuccess,
@@ -119,7 +119,7 @@ export default function NewForm1(props) {
           }
         }
       }}
-      {...getOverrideProps(overrides, "NewForm1")}
+      {...getOverrideProps(overrides, "AddExpense")}
       {...rest}
     >
       <TextField

@@ -5,7 +5,8 @@
  **************************************************************************/
 
 export { default as AddBudget } from "./AddBudget";
+export { default as AddExpense } from "./AddExpense";
 export { default as BudgetUpdateForm } from "./BudgetUpdateForm";
-export { default as ExpenseUpdateForm } from "./ExpenseUpdateForm";
+export { default as ExpenseCreateForm } from "./ExpenseCreateForm";
 export { default as NewForm1 } from "./NewForm1";
 export { default as studioTheme } from "./studioTheme";

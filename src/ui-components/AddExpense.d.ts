@@ -7,38 +7,36 @@
 import * as React from "react";
 import { GridProps, SelectFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
 import { EscapeHatchProps } from "@aws-amplify/ui-react/internal";
-import { Expense } from "../models";
 export declare type ValidationResponse = {
     hasError: boolean;
     errorMessage?: string;
 };
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
-export declare type ExpenseUpdateFormInputValues = {
+export declare type AddExpenseInputValues = {
     item?: string;
     category?: string;
     amount?: number;
 };
-export declare type ExpenseUpdateFormValidationValues = {
+export declare type AddExpenseValidationValues = {
     item?: ValidationFunction<string>;
     category?: ValidationFunction<string>;
     amount?: ValidationFunction<number>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
-export declare type ExpenseUpdateFormOverridesProps = {
-    ExpenseUpdateFormGrid?: PrimitiveOverrideProps<GridProps>;
+export declare type AddExpenseOverridesProps = {
+    AddExpenseGrid?: PrimitiveOverrideProps<GridProps>;
     item?: PrimitiveOverrideProps<TextFieldProps>;
     category?: PrimitiveOverrideProps<SelectFieldProps>;
     amount?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
-export declare type ExpenseUpdateFormProps = React.PropsWithChildren<{
-    overrides?: ExpenseUpdateFormOverridesProps | undefined | null;
+export declare type AddExpenseProps = React.PropsWithChildren<{
+    overrides?: AddExpenseOverridesProps | undefined | null;
 } & {
-    id?: string;
-    expense?: Expense;
-    onSubmit?: (fields: ExpenseUpdateFormInputValues) => ExpenseUpdateFormInputValues;
-    onSuccess?: (fields: ExpenseUpdateFormInputValues) => void;
-    onError?: (fields: ExpenseUpdateFormInputValues, errorMessage: string) => void;
-    onChange?: (fields: ExpenseUpdateFormInputValues) => ExpenseUpdateFormInputValues;
-    onValidate?: ExpenseUpdateFormValidationValues;
+    clearOnSuccess?: boolean;
+    onSubmit?: (fields: AddExpenseInputValues) => AddExpenseInputValues;
+    onSuccess?: (fields: AddExpenseInputValues) => void;
+    onError?: (fields: AddExpenseInputValues, errorMessage: string) => void;
+    onChange?: (fields: AddExpenseInputValues) => AddExpenseInputValues;
+    onValidate?: AddExpenseValidationValues;
 } & React.CSSProperties>;
-export default function ExpenseUpdateForm(props: ExpenseUpdateFormProps): React.ReactElement;
+export default function AddExpense(props: AddExpenseProps): React.ReactElement;

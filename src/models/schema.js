@@ -91,7 +91,9 @@ export const schema = {
                 "category": {
                     "name": "category",
                     "isArray": false,
-                    "type": "String",
+                    "type": {
+                        "enum": "Category"
+                    },
                     "isRequired": false,
                     "attributes": []
                 },
@@ -157,8 +159,18 @@ export const schema = {
             ]
         }
     },
-    "enums": {},
+    "enums": {
+        "Category": {
+            "name": "Category",
+            "values": [
+                "ENTERTAINMENT",
+                "FOOD",
+                "BEAUTY",
+                "ETC"
+            ]
+        }
+    },
     "nonModels": {},
     "codegenVersion": "3.4.4",
-    "version": "555e3d7aa08555d503ed8ef715167a4f"
+    "version": "9ef1e96400e657e00107f252ccff775e"
 };

@@ -2,7 +2,12 @@ import { ModelInit, MutableModel, __modelMeta__, ManagedIdentifier } from "@aws-
 // @ts-ignore
 import { LazyLoading, LazyLoadingDisabled } from "@aws-amplify/datastore";
 
-
+export enum Category {
+  ENTERTAINMENT = "ENTERTAINMENT",
+  FOOD = "FOOD",
+  BEAUTY = "BEAUTY",
+  ETC = "ETC"
+}
 
 
 
@@ -41,7 +46,7 @@ type EagerExpense = {
   };
   readonly id: string;
   readonly item: string;
-  readonly category?: string | null;
+  readonly category?: Category | keyof typeof Category | null;
   readonly amount: number;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -54,7 +59,7 @@ type LazyExpense = {
   };
   readonly id: string;
   readonly item: string;
-  readonly category?: string | null;
+  readonly category?: Category | keyof typeof Category | null;
   readonly amount: number;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;

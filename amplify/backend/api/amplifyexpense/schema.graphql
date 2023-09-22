@@ -1,3 +1,10 @@
+enum Category {
+  ENTERTAINMENT
+  FOOD
+  BEAUTY
+  ETC
+}
+
 type Budget @model @auth(rules: [{allow: public}, {allow: owner}]) {
   id: ID!
   budget: Int!
@@ -6,7 +13,7 @@ type Budget @model @auth(rules: [{allow: public}, {allow: owner}]) {
 type Expense @model @auth(rules: [{allow: public}, {allow: owner}]) {
   id: ID!
   item: String!
-  category: String
+  category: Category
   amount: Float!
 }
  

@@ -7,9 +7,9 @@ import {
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 
 function ExpenseList({ expenses, deleteItem }) {
-  const handleDeleteClick = ({ id }) => {
-    console.log(id);
-    deleteItem(id);
+  const handleDeleteClick = (item) => {
+    console.log(item);
+    deleteItem(item);
   };
 
   const data = expenses.map((expense) => ({

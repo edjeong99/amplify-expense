@@ -16,15 +16,13 @@ export default function SummaryCard({budget, expenseTotal, handleChangeBudget}) 
       <CardContent>
        
         <Typography variant="h6" component="div">
-          Budget : ${budget}
+          Budget : ${budget}   <Button variant = 'outlined' onClick={handleChangeBudget} size="small">Change Budget</Button>
         </Typography>
         <Typography variant="h6" component="div">
           Expense : ${expenseTotal}
         </Typography>
       </CardContent>
-      <CardActions>
-        <Button onClick={handleChangeBudget} size="small">Change Budget</Button>
-      </CardActions>
+      
     </React.Fragment>
   );
 

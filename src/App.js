@@ -5,11 +5,14 @@ import { withAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import { deleteExpense } from "./graphql/mutations";
 import { listExpenses } from "./graphql/queries";
-import {  NewForm1, AddBudget } from "./ui-components";
+import {   AddBudget, AddExpense, ExpenseCreateForm } from "./ui-components";
 import { Container, Modal } from "@mui/material";
 import Header from "./components/Header";
 import ExpenseList from "./components/ExpenseList";
 import SummaryCard from './components/SummaryCard'
+import { DataStore } from '@aws-amplify/datastore';
+import { Budget, Expense } from './models';
+
 
 function App({ signOut, user }) {
   const [budget, setBudget ] = useState(1000);
@@ -19,6 +22,7 @@ function App({ signOut, user }) {
   const [showChangeBudget, setShowChangeBudget] = useState(false);
 
   useEffect(() => {
+    fetchBudget();
     fetchExpenses();
   }, [expenseTotal]);
 
@@ -29,13 +33,22 @@ function App({ signOut, user }) {
     setShowChangeBudget((prevState) => !prevState);
   };
 
-
+  async function fetchBudget() {
+    try {
+      const models = await DataStore.query(Budget);
+console.log(models);
+     
+    } catch (err) {
+      console.log("error fetching expenses");
+    }
+  }
   async function fetchExpenses() {
     try {
-      const expenseData = await API.graphql(graphqlOperation(listExpenses));
-      const expensesResult = expenseData.data.listExpenses.items;
-      setExpenses(expensesResult);
-      const totalExpense = expensesResult
+      const expenseData = await DataStore.query(Expense);
+   
+      console.log(expenseData)
+      setExpenses(expenseData);
+      const totalExpense = expenseData
       .map(exp => exp.amount)
       .reduce((acc, val) => (acc += val), 0)
       .toFixed(2);
@@ -63,8 +76,8 @@ function App({ signOut, user }) {
     //DataStore.clear()
     signOut();
   }
-  const newForm1Overrides = {
-    NewForm1: {
+  const ExpenseCreateFormOverrides = {
+    AddExpense: {
       style: {
         width: "60%",
         backgroundColor: "lightblue",
@@ -102,19 +115,18 @@ function App({ signOut, user }) {
     },
   };
 
-  const deleteItem = async (id) => {
+  const deleteItem = async ({id, amount}) => {
     if (expenses.filter((exp) => exp.id === id).length < 1) return;
+
+    
+
     try {
-      const deletedExpense = await API.graphql({
-        query: deleteExpense,
-        variables: {
-          input: {
-            id: id,
-          },
-        },
-      });
+      const modelToDelete = await DataStore.query(Expense, id);
+      DataStore.delete(modelToDelete);
       const newExpense = expenses.filter((exp) => exp.id !== id);
       setExpenses(newExpense);
+      setExpenseTotal(prevState => prevState - amount );
+
       console.log(expenses);
     } catch (err) {
       console.log("error deleting expenses");
@@ -144,7 +156,7 @@ function App({ signOut, user }) {
         onClose={handleShowAddExpense}
         aria-labelledby="modal-modal-title"
       >
-        <NewForm1 onSuccess={addExpense} overrides={newForm1Overrides} />
+        <AddExpense onSuccess={addExpense} overrides={ExpenseCreateFormOverrides} />
       </Modal>
 
       <ExpenseList expenses={expenses} deleteItem={deleteItem} />
