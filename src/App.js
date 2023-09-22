@@ -5,7 +5,7 @@ import { withAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import { deleteExpense } from "./graphql/mutations";
 import { listExpenses } from "./graphql/queries";
-import {  NewForm1 } from "./ui-components";
+import {  NewForm1, AddBudget } from "./ui-components";
 import { Container, Modal } from "@mui/material";
 import Header from "./components/Header";
 import ExpenseList from "./components/ExpenseList";
@@ -20,7 +20,7 @@ function App({ signOut, user }) {
 
   useEffect(() => {
     fetchExpenses();
-  }, []);
+  }, [expenseTotal]);
 
   const handleShowAddExpense = () => {
     setShowAddExpense((prevState) => !prevState);
@@ -35,8 +35,12 @@ function App({ signOut, user }) {
       const expenseData = await API.graphql(graphqlOperation(listExpenses));
       const expensesResult = expenseData.data.listExpenses.items;
       setExpenses(expensesResult);
-      console.log("expenses");
-      console.log(expensesResult);
+      const totalExpense = expensesResult
+      .map(exp => exp.amount)
+      .reduce((acc, val) => (acc += val), 0)
+      .toFixed(2);
+      setExpenseTotal(totalExpense);
+      console.log(totalExpense)
     } catch (err) {
       console.log("error fetching expenses");
     }
@@ -45,7 +49,8 @@ function App({ signOut, user }) {
   // async
   function addExpense(expense) {
     //CRUD is done by the component.
-    setExpenses([...expenses, expense]);
+    setExpenseTotal(prevState => prevState + expense.amount)
+    setShowAddExpense(false)
   }
 
   function changeBudget(budget) {
@@ -74,6 +79,23 @@ function App({ signOut, user }) {
       },
     },
     amount: {
+      style: {
+        backgroundColor: "white",
+      },
+    },
+  };
+
+  const addBudgetOverrides = {
+    AddBudget: {
+      style: {
+        width: "60%",
+        backgroundColor: "lightblue",
+        position: "absolute",
+        top: "20%",
+        left: "20%",
+      },
+    },
+    budget: {
       style: {
         backgroundColor: "white",
       },
@@ -114,7 +136,7 @@ function App({ signOut, user }) {
         onClose={handleShowChangeBudget}
         aria-labelledby="modal-modal-title"
       >
-        <NewForm1 onSuccess={changeBudget} overrides={newForm1Overrides} />
+        <AddBudget onSuccess={changeBudget} overrides={addBudgetOverrides} />
       </Modal>
 
       <Modal

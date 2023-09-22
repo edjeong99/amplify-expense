@@ -7,32 +7,30 @@
 import * as React from "react";
 import { GridProps, TextFieldProps } from "@aws-amplify/ui-react";
 import { EscapeHatchProps } from "@aws-amplify/ui-react/internal";
-import { Budget } from "../models";
 export declare type ValidationResponse = {
     hasError: boolean;
     errorMessage?: string;
 };
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
-export declare type BudgetUpdateFormInputValues = {
+export declare type AddBudgetInputValues = {
     budget?: number;
 };
-export declare type BudgetUpdateFormValidationValues = {
+export declare type AddBudgetValidationValues = {
     budget?: ValidationFunction<number>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
-export declare type BudgetUpdateFormOverridesProps = {
-    BudgetUpdateFormGrid?: PrimitiveOverrideProps<GridProps>;
+export declare type AddBudgetOverridesProps = {
+    AddBudgetGrid?: PrimitiveOverrideProps<GridProps>;
     budget?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
-export declare type BudgetUpdateFormProps = React.PropsWithChildren<{
-    overrides?: BudgetUpdateFormOverridesProps | undefined | null;
+export declare type AddBudgetProps = React.PropsWithChildren<{
+    overrides?: AddBudgetOverridesProps | undefined | null;
 } & {
-    id?: string;
-    budget?: Budget;
-    onSubmit?: (fields: BudgetUpdateFormInputValues) => BudgetUpdateFormInputValues;
-    onSuccess?: (fields: BudgetUpdateFormInputValues) => void;
-    onError?: (fields: BudgetUpdateFormInputValues, errorMessage: string) => void;
-    onChange?: (fields: BudgetUpdateFormInputValues) => BudgetUpdateFormInputValues;
-    onValidate?: BudgetUpdateFormValidationValues;
+    clearOnSuccess?: boolean;
+    onSubmit?: (fields: AddBudgetInputValues) => AddBudgetInputValues;
+    onSuccess?: (fields: AddBudgetInputValues) => void;
+    onError?: (fields: AddBudgetInputValues, errorMessage: string) => void;
+    onChange?: (fields: AddBudgetInputValues) => AddBudgetInputValues;
+    onValidate?: AddBudgetValidationValues;
 } & React.CSSProperties>;
-export default function BudgetUpdateForm(props: BudgetUpdateFormProps): React.ReactElement;
+export default function AddBudget(props: AddBudgetProps): React.ReactElement;

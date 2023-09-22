@@ -4,7 +4,7 @@
  * Any changes to this file will be overwritten when running amplify pull. *
  **************************************************************************/
 
-export { default as BudgetCreateForm } from "./BudgetCreateForm";
+export { default as AddBudget } from "./AddBudget";
 export { default as BudgetUpdateForm } from "./BudgetUpdateForm";
 export { default as ExpenseUpdateForm } from "./ExpenseUpdateForm";
 export { default as NewForm1 } from "./NewForm1";

@@ -8,13 +8,12 @@
 import * as React from "react";
 import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
 import { getOverrideProps } from "@aws-amplify/ui-react/internal";
-import { Expense } from "../models";
+import { Budget } from "../models";
 import { fetchByPath, validateField } from "./utils";
 import { DataStore } from "aws-amplify";
-export default function ExpenseUpdateForm(props) {
+export default function AddBudget(props) {
   const {
-    id: idProp,
-    expense: expenseModelProp,
+    clearOnSuccess = true,
     onSuccess,
     onError,
     onSubmit,
@@ -24,38 +23,16 @@ export default function ExpenseUpdateForm(props) {
     ...rest
   } = props;
   const initialValues = {
-    item: "",
-    category: "",
-    amount: "",
+    budget: "",
   };
-  const [item, setItem] = React.useState(initialValues.item);
-  const [category, setCategory] = React.useState(initialValues.category);
-  const [amount, setAmount] = React.useState(initialValues.amount);
+  const [budget, setBudget] = React.useState(initialValues.budget);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
-    const cleanValues = expenseRecord
-      ? { ...initialValues, ...expenseRecord }
-      : initialValues;
-    setItem(cleanValues.item);
-    setCategory(cleanValues.category);
-    setAmount(cleanValues.amount);
+    setBudget(initialValues.budget);
     setErrors({});
   };
-  const [expenseRecord, setExpenseRecord] = React.useState(expenseModelProp);
-  React.useEffect(() => {
-    const queryData = async () => {
-      const record = idProp
-        ? await DataStore.query(Expense, idProp)
-        : expenseModelProp;
-      setExpenseRecord(record);
-    };
-    queryData();
-  }, [idProp, expenseModelProp]);
-  React.useEffect(resetStateValues, [expenseRecord]);
   const validations = {
-    item: [{ type: "Required" }],
-    category: [],
-    amount: [{ type: "Required" }],
+    budget: [{ type: "Required" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -83,9 +60,7 @@ export default function ExpenseUpdateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          item,
-          category,
-          amount,
+          budget,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -115,13 +90,12 @@ export default function ExpenseUpdateForm(props) {
               modelFields[key] = null;
             }
           });
-          await DataStore.save(
-            Expense.copyOf(expenseRecord, (updated) => {
-              Object.assign(updated, modelFields);
-            })
-          );
+          await DataStore.save(new Budget(modelFields));
           if (onSuccess) {
             onSuccess(modelFields);
+          }
+          if (clearOnSuccess) {
+            resetStateValues();
           }
         } catch (err) {
           if (onError) {
@@ -129,104 +103,49 @@ export default function ExpenseUpdateForm(props) {
           }
         }
       }}
-      {...getOverrideProps(overrides, "ExpenseUpdateForm")}
+      {...getOverrideProps(overrides, "AddBudget")}
       {...rest}
     >
       <TextField
-        label="Item"
-        isRequired={true}
-        isReadOnly={false}
-        value={item}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              item: value,
-              category,
-              amount,
-            };
-            const result = onChange(modelFields);
-            value = result?.item ?? value;
-          }
-          if (errors.item?.hasError) {
-            runValidationTasks("item", value);
-          }
-          setItem(value);
-        }}
-        onBlur={() => runValidationTasks("item", item)}
-        errorMessage={errors.item?.errorMessage}
-        hasError={errors.item?.hasError}
-        {...getOverrideProps(overrides, "item")}
-      ></TextField>
-      <TextField
-        label="Category"
-        isRequired={false}
-        isReadOnly={false}
-        value={category}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              item,
-              category: value,
-              amount,
-            };
-            const result = onChange(modelFields);
-            value = result?.category ?? value;
-          }
-          if (errors.category?.hasError) {
-            runValidationTasks("category", value);
-          }
-          setCategory(value);
-        }}
-        onBlur={() => runValidationTasks("category", category)}
-        errorMessage={errors.category?.errorMessage}
-        hasError={errors.category?.hasError}
-        {...getOverrideProps(overrides, "category")}
-      ></TextField>
-      <TextField
-        label="Amount"
+        label="Budget"
         isRequired={true}
         isReadOnly={false}
         type="number"
         step="any"
-        value={amount}
+        value={budget}
         onChange={(e) => {
-          let value = isNaN(parseFloat(e.target.value))
+          let value = isNaN(parseInt(e.target.value))
             ? e.target.value
-            : parseFloat(e.target.value);
+            : parseInt(e.target.value);
           if (onChange) {
             const modelFields = {
-              item,
-              category,
-              amount: value,
+              budget: value,
             };
             const result = onChange(modelFields);
-            value = result?.amount ?? value;
+            value = result?.budget ?? value;
           }
-          if (errors.amount?.hasError) {
-            runValidationTasks("amount", value);
+          if (errors.budget?.hasError) {
+            runValidationTasks("budget", value);
           }
-          setAmount(value);
+          setBudget(value);
         }}
-        onBlur={() => runValidationTasks("amount", amount)}
-        errorMessage={errors.amount?.errorMessage}
-        hasError={errors.amount?.hasError}
-        {...getOverrideProps(overrides, "amount")}
+        onBlur={() => runValidationTasks("budget", budget)}
+        errorMessage={errors.budget?.errorMessage}
+        hasError={errors.budget?.hasError}
+        {...getOverrideProps(overrides, "budget")}
       ></TextField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}
       >
         <Button
-          children="Reset"
+          children="Clear"
           type="reset"
           onClick={(event) => {
             event.preventDefault();
             resetStateValues();
           }}
-          isDisabled={!(idProp || expenseModelProp)}
-          {...getOverrideProps(overrides, "ResetButton")}
+          {...getOverrideProps(overrides, "ClearButton")}
         ></Button>
         <Flex
           gap="15px"
@@ -236,10 +155,7 @@ export default function ExpenseUpdateForm(props) {
             children="Submit"
             type="submit"
             variation="primary"
-            isDisabled={
-              !(idProp || expenseModelProp) ||
-              Object.values(errors).some((e) => e?.hasError)
-            }
+            isDisabled={Object.values(errors).some((e) => e?.hasError)}
             {...getOverrideProps(overrides, "SubmitButton")}
           ></Button>
         </Flex>

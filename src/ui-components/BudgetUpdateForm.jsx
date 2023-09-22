@@ -8,10 +8,9 @@
 import * as React from "react";
 import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
 import { getOverrideProps } from "@aws-amplify/ui-react/internal";
+import { Budget } from "../models";
 import { fetchByPath, validateField } from "./utils";
-import { API } from "aws-amplify";
-import { getBudget } from "../graphql/queries";
-import { updateBudget } from "../graphql/mutations";
+import { DataStore } from "aws-amplify";
 export default function BudgetUpdateForm(props) {
   const {
     id: idProp,
@@ -40,12 +39,7 @@ export default function BudgetUpdateForm(props) {
   React.useEffect(() => {
     const queryData = async () => {
       const record = idProp
-        ? (
-            await API.graphql({
-              query: getBudget,
-              variables: { id: idProp },
-            })
-          )?.data?.getBudget
+        ? await DataStore.query(Budget, idProp)
         : budgetModelProp;
       setBudgetRecord(record);
     };
@@ -111,22 +105,17 @@ export default function BudgetUpdateForm(props) {
               modelFields[key] = null;
             }
           });
-          await API.graphql({
-            query: updateBudget,
-            variables: {
-              input: {
-                id: budgetRecord.id,
-                ...modelFields,
-              },
-            },
-          });
+          await DataStore.save(
+            Budget.copyOf(budgetRecord, (updated) => {
+              Object.assign(updated, modelFields);
+            })
+          );
           if (onSuccess) {
             onSuccess(modelFields);
           }
         } catch (err) {
           if (onError) {
-            const messages = err.errors.map((e) => e.message).join("\n");
-            onError(modelFields, messages);
+            onError(modelFields, err.message);
           }
         }
       }}

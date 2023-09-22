@@ -14,9 +14,9 @@ import {
   TextField,
 } from "@aws-amplify/ui-react";
 import { getOverrideProps } from "@aws-amplify/ui-react/internal";
+import { Expense } from "../models";
 import { fetchByPath, validateField } from "./utils";
-import { API } from "aws-amplify";
-import { createExpense } from "../graphql/mutations";
+import { DataStore } from "aws-amplify";
 export default function NewForm1(props) {
   const {
     clearOnSuccess = true,
@@ -106,14 +106,7 @@ export default function NewForm1(props) {
               modelFields[key] = null;
             }
           });
-          await API.graphql({
-            query: createExpense,
-            variables: {
-              input: {
-                ...modelFields,
-              },
-            },
-          });
+          await DataStore.save(new Expense(modelFields));
           if (onSuccess) {
             onSuccess(modelFields);
           }
@@ -122,8 +115,7 @@ export default function NewForm1(props) {
           }
         } catch (err) {
           if (onError) {
-            const messages = err.errors.map((e) => e.message).join("\n");
-            onError(modelFields, messages);
+            onError(modelFields, err.message);
           }
         }
       }}
