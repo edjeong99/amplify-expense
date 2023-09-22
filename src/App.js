@@ -5,11 +5,13 @@ import { createExpense } from './graphql/mutations'
 import { listExpenses } from './graphql/queries'
 import React, { useEffect, useState } from 'react'
 import { withAuthenticator} from '@aws-amplify/ui-react';
-
+import '@aws-amplify/ui-react/styles.css';
 import AddExpense from './components/AddExpense'
 import Header from './components/Header'
 import {Container, Modal}  from '@mui/material'
 import ExpenseList from './components/ExpenseList';
+import ExpenseCreateForm from './ui-components/ExpenseCreateForm'
+
 
 function App({ signOut, user }) { 
   const [expenses, setExpenses] = useState([])
@@ -33,14 +35,21 @@ const handleShowAddExpense = () => {
     } catch (err) { console.log('error fetching expenses') }
   }
 
-  async function addExpense(expense) {
-    try {
+  // async 
+  function addExpense(expense) {
+    // try {
       setExpenses([...expenses, expense])
 
-      await API.graphql(graphqlOperation(createExpense, {input: expense}))
-    } catch (err) {
-      console.log('error creating todo:', err)
-    }
+    //   await API.graphql(graphqlOperation(createExpense, {input: expense}))
+    // } catch (err) {
+    //   console.log('error creating todo:', err)
+    // }
+  }
+
+  function cleanup (){
+   // Amplify.DataStore.clear();
+   //DataStore.clear()
+    signOut();
   }
 
 
@@ -48,12 +57,13 @@ const handleShowAddExpense = () => {
     // <div style={styles.container}>
     <Container maxWidth="sm">
      <meta name="viewport" content="initial-scale=1, width=device-width" />
-   <Header signOut={signOut} showAddExpense={handleShowAddExpense}/>
+   <Header user={user} cleanup={cleanup} showAddExpense={handleShowAddExpense}/>
    <Modal
       open={showAddExpense}
       onClose={handleShowAddExpense}
       aria-labelledby="modal-modal-title" >
-      <AddExpense addExpense={addExpense} />
+    
+      <ExpenseCreateForm onSuccess={addExpense}/>
     </Modal>
 
     <ExpenseList expenses={expenses} />
@@ -72,7 +82,7 @@ const styles = {
   expenseAmount: { color:'red', fontWeight: 'bold' },
   button: { backgroundColor: 'black', color: 'white', outline: 'none', fontSize: 18, padding: '12px 0px' }
 }
-export default (App);
-// export default withAuthenticator(App);
+// export default (App);
+export default withAuthenticator(App);
 
 

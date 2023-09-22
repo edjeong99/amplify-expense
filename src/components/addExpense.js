@@ -19,7 +19,7 @@ const AddExpense = ({addExpense}) => {
       }
 
   return (
-    <div> 
+    <div style={styles.container}> 
         <h2>Add Expense</h2>
      <input 
       onChange={event => setInput('item', event.target.value)}
