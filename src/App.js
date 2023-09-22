@@ -1,7 +1,7 @@
 import './App.css';
 
 import { API, graphqlOperation } from 'aws-amplify'
-import { createExpense } from './graphql/mutations'
+import { deleteExpense } from './graphql/mutations'
 import { listExpenses } from './graphql/queries'
 import React, { useEffect, useState } from 'react'
 import { withAuthenticator} from '@aws-amplify/ui-react';
@@ -10,7 +10,7 @@ import AddExpense from './components/AddExpense'
 import Header from './components/Header'
 import {Container, Modal}  from '@mui/material'
 import ExpenseList from './components/ExpenseList';
-import ExpenseCreateForm from './ui-components/ExpenseCreateForm'
+import {ExpenseCreateForm, NewForm1} from './ui-components'
 
 
 function App({ signOut, user }) { 
@@ -37,19 +37,38 @@ const handleShowAddExpense = () => {
 
   // async 
   function addExpense(expense) {
-    // try {
-      setExpenses([...expenses, expense])
-
-    //   await API.graphql(graphqlOperation(createExpense, {input: expense}))
-    // } catch (err) {
-    //   console.log('error creating todo:', err)
-    // }
+    //CRUD is done by the component.
+       setExpenses([...expenses, expense])
   }
 
   function cleanup (){
    // Amplify.DataStore.clear();
    //DataStore.clear()
     signOut();
+  }
+  const newForm1Overrides = {
+    style: {
+      width : '50%',
+      backgroundColor : 'red'
+    }
+  }
+
+   const deleteItem = async (id) =>{
+
+    if( expenses.filter(exp => exp.id === id).length < 1)
+    return;
+    try {
+      const deletedExpense = await API.graphql({
+        query: deleteExpense,
+        variables: {
+            input: {
+                id: id
+            }
+        } });
+     const newExpense = expenses.filter(exp => exp.id !== id);
+      setExpenses(newExpense)
+      console.log(expenses)
+    } catch (err) { console.log('error deleting expenses') }
   }
 
 
@@ -63,10 +82,10 @@ const handleShowAddExpense = () => {
       onClose={handleShowAddExpense}
       aria-labelledby="modal-modal-title" >
     
-      <ExpenseCreateForm onSuccess={addExpense}/>
+      <NewForm1 onSuccess={addExpense}  overrides={newForm1Overrides}/>
     </Modal>
 
-    <ExpenseList expenses={expenses} />
+    <ExpenseList expenses={expenses} deleteItem={deleteItem} />
    
     </Container>
 
@@ -82,7 +101,7 @@ const styles = {
   expenseAmount: { color:'red', fontWeight: 'bold' },
   button: { backgroundColor: 'black', color: 'white', outline: 'none', fontSize: 18, padding: '12px 0px' }
 }
-// export default (App);
-export default withAuthenticator(App);
+export default (App);
+// export default withAuthenticator(App);
 
 

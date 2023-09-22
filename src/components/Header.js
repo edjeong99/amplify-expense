@@ -38,7 +38,7 @@ function Header({cleanup, showAddExpense, user}) {
       <CssBaseline />
       <Toolbar>
         <Typography variant="h6" style={styles.logo} >
-         Hello {user.username}
+         Hello {user?.username}
         </Typography>
        
         <div style={styles.navlinks}>

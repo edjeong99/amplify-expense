@@ -1,4 +1,4 @@
-type Expense @model @auth(rules: [{allow: public}]) {
+type Expense @model @auth(rules: [{allow: owner}]) {
   id: ID!
   item: String!
   category: String
