@@ -11,15 +11,20 @@ import Typography from '@mui/material/Typography';
 
 export default function SummaryCard({budget, expenseTotal, handleChangeBudget}) {
 
+  const exp = +expenseTotal;
+
   const card = (
     <React.Fragment>
       <CardContent>
        
         <Typography variant="h6" component="div">
-          Budget : ${budget}   <Button variant = 'outlined' onClick={handleChangeBudget} size="small">Change Budget</Button>
+          Budget : ${budget}       <Button style={{marginleft:"20px"}} variant = 'outlined' onClick={handleChangeBudget} size="small">Change Budget</Button>
         </Typography>
         <Typography variant="h6" component="div">
-          Expense : ${expenseTotal}
+          Expense : ${exp.toFixed(0)}
+        </Typography>
+        <Typography variant="h6" component="div">
+          Balance : ${budget - expenseTotal}
         </Typography>
       </CardContent>
       

@@ -32,7 +32,7 @@ import {
 
 
 
-function Header({cleanup, showAddExpense, user}) {
+function Header({cleanup, showAddExpense, user,resetExpense }) {
   return (
     <AppBar position="static">
       <CssBaseline />
@@ -43,7 +43,7 @@ function Header({cleanup, showAddExpense, user}) {
        
         <div style={styles.navlinks}>
         <p style={styles.link} onClick={showAddExpense}> Add Expense  </p>
-        <p style={styles.link}> Reset Expense  </p>
+        <p style={styles.link} onClick={resetExpense}> Reset Expense  </p>
       
        <Button onClick={cleanup} style={styles.link} variant="outlined" endIcon={<LogoutIcon />}>
   SignOut

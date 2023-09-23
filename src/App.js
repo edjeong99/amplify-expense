@@ -5,21 +5,22 @@ import { withAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import { deleteExpense } from "./graphql/mutations";
 import { listExpenses } from "./graphql/queries";
-import {   AddBudget, AddExpense, ExpenseCreateForm } from "./ui-components";
+import { AddBudget, AddExpense, ExpenseCreateForm } from "./ui-components";
 import { Container, Modal } from "@mui/material";
 import Header from "./components/Header";
 import ExpenseList from "./components/ExpenseList";
-import SummaryCard from './components/SummaryCard'
-import { DataStore } from '@aws-amplify/datastore';
-import { Budget, Expense } from './models';
-
+import SummaryCard from "./components/SummaryCard";
+import { DataStore } from "@aws-amplify/datastore";
+import { Budget, Expense } from "./models";
 
 function App({ signOut, user }) {
-  const [budget, setBudget ] = useState(1000);
-  const [expenseTotal, setExpenseTotal ] = useState(0);
+  const [budget, setBudget] = useState(1000);
+  const [expenseTotal, setExpenseTotal] = useState(0);
   const [expenses, setExpenses] = useState([]);
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [showChangeBudget, setShowChangeBudget] = useState(false);
+
+  let budgetId;
 
   useEffect(() => {
     fetchBudget();
@@ -35,25 +36,29 @@ function App({ signOut, user }) {
 
   async function fetchBudget() {
     try {
-      const models = await DataStore.query(Budget);
-console.log(models);
-     
+      const budget = await DataStore.query(Budget);
+      console.log(budget[0]);
+      if (budget.length > 0) {
+        setBudget(budget[0].budget);
+        budgetId = budget[0].id;
+        console.log(budget[0].id + " ----" + budgetId);
+      }
     } catch (err) {
-      console.log("error fetching expenses");
+      console.log("error budget expenses");
     }
   }
   async function fetchExpenses() {
     try {
       const expenseData = await DataStore.query(Expense);
-   
-      console.log(expenseData)
+
+      console.log(expenseData);
       setExpenses(expenseData);
       const totalExpense = expenseData
-      .map(exp => exp.amount)
-      .reduce((acc, val) => (acc += val), 0)
-      .toFixed(2);
+        .map((exp) => exp.amount)
+        .reduce((acc, val) => (acc += val), 0)
+        .toFixed(2);
       setExpenseTotal(totalExpense);
-      console.log(totalExpense)
+      console.log(totalExpense);
     } catch (err) {
       console.log("error fetching expenses");
     }
@@ -62,19 +67,35 @@ console.log(models);
   // async
   function addExpense(expense) {
     //CRUD is done by the component.
-    setExpenseTotal(prevState => prevState + expense.amount)
-    setShowAddExpense(false)
+    setExpenseTotal((prevState) => prevState + expense.amount);
+    setShowAddExpense(false);
   }
 
-  function changeBudget(budget) {
+  async function changeBudget({ budget }) {
     //CRUD is done by the component.
-    setBudget(budget);
+    console.log(budget);
+
+    try {
+      const modelToDelete = await DataStore.query(Budget);
+      console.log(modelToDelete);
+      modelToDelete.map((m) => DataStore.delete(m));
+
+      await DataStore.save(new Budget({ budget: +budget }));
+      setBudget(budget);
+      setShowChangeBudget(false);
+    } catch (err) {
+      console.log("error change budget ");
+    }
   }
-    
-  function cleanup() {
-    // Amplify.DataStore.clear();
-    //DataStore.clear()
-    signOut();
+  async function resetExpense() {
+    try {
+      const modelToDelete = await DataStore.query(Expense);
+      console.log(modelToDelete);
+      modelToDelete.map((m) => DataStore.delete(m));
+      setExpenseTotal(0);
+    } catch (err) {
+      console.log("error reset expense ");
+    }
   }
   const ExpenseCreateFormOverrides = {
     AddExpense: {
@@ -115,17 +136,15 @@ console.log(models);
     },
   };
 
-  const deleteItem = async ({id, amount}) => {
+  const deleteItem = async ({ id, amount }) => {
     if (expenses.filter((exp) => exp.id === id).length < 1) return;
-
-    
 
     try {
       const modelToDelete = await DataStore.query(Expense, id);
       DataStore.delete(modelToDelete);
       const newExpense = expenses.filter((exp) => exp.id !== id);
       setExpenses(newExpense);
-      setExpenseTotal(prevState => prevState - amount );
+      setExpenseTotal((prevState) => prevState - amount);
 
       console.log(expenses);
     } catch (err) {
@@ -139,16 +158,21 @@ console.log(models);
       <meta name="viewport" content="initial-scale=1, width=device-width" />
       <Header
         user={user}
-        cleanup={cleanup}
+        cleanup={signOut}
+        resetExpense={resetExpense}
         showAddExpense={handleShowAddExpense}
       />
-      <SummaryCard budget={budget} expenseTotal={expenseTotal} handleChangeBudget={handleShowChangeBudget}/>
+      <SummaryCard
+        budget={budget}
+        expenseTotal={expenseTotal}
+        handleChangeBudget={handleShowChangeBudget}
+      />
       <Modal
         open={showChangeBudget}
         onClose={handleShowChangeBudget}
         aria-labelledby="modal-modal-title"
       >
-        <AddBudget onSuccess={changeBudget} overrides={addBudgetOverrides} />
+        <AddBudget onSubmit={changeBudget} overrides={addBudgetOverrides} />
       </Modal>
 
       <Modal
@@ -156,7 +180,10 @@ console.log(models);
         onClose={handleShowAddExpense}
         aria-labelledby="modal-modal-title"
       >
-        <AddExpense onSuccess={addExpense} overrides={ExpenseCreateFormOverrides} />
+        <AddExpense
+          onSuccess={addExpense}
+          overrides={ExpenseCreateFormOverrides}
+        />
       </Modal>
 
       <ExpenseList expenses={expenses} deleteItem={deleteItem} />

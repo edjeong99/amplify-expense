@@ -1,12 +1,22 @@
 
 This is a practive project to use AWS Amplify for fast development and deploying.
 Also used Material UI.
+Amplify is a usful tool to develop and host quickly but also require some learning.
+It also has several bugs that cause lots of wasteful time/effort.
+I would recommend to use this if you are willing to spend some time to learn to use it properly.
+Once you are familiar, it should be a good tool to have.
+
+
+The app is keep track of expense.
+User can enter an expense and it is recorded in Amplify Dynamo DB.
+Budget is set at 1000 in the begining.  User can change the budget.
+Each expense can be removed.  Or all expenses are removed by clicking 'Reset Expense'
 
 
 - NewForm1.jsx - created by Amplify.  execute create fetch automatically.
 - ExpenseList - use DataGrid by MUI.
 - used amplify created component ExpenseCreateForm.  can use props to handle what to do when 'submit' is clicked, ie 'onSuccess'
-
+- about changing budget.  user can change budget and that needs to be saved in DB.  however, could not find query only the latest budget from DB.  so, when budget is changed, all entry in budget table is deleted and new budget is saved.  so the first data from query is the valid budget
 
 
 
